@@ -1,0 +1,760 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Analyze</class>
+ <widget class="QMainWindow" name="Analyze">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1277</width>
+    <height>916</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QVBoxLayout" name="verticalLayout_3">
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_6">
+      <property name="leftMargin">
+       <number>5</number>
+      </property>
+      <property name="topMargin">
+       <number>5</number>
+      </property>
+      <property name="rightMargin">
+       <number>5</number>
+      </property>
+      <property name="bottomMargin">
+       <number>5</number>
+      </property>
+      <item>
+       <spacer name="horizontalSpacer_3">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QLabel" name="logo">
+        <property name="minimumSize">
+         <size>
+          <width>251</width>
+          <height>81</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>251</width>
+          <height>81</height>
+         </size>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="pixmap">
+         <pixmap>static/logo_analyze.png</pixmap>
+        </property>
+        <property name="scaledContents">
+         <bool>true</bool>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer_4">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_7">
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <property name="leftMargin">
+         <number>5</number>
+        </property>
+        <property name="topMargin">
+         <number>5</number>
+        </property>
+        <property name="rightMargin">
+         <number>5</number>
+        </property>
+        <property name="bottomMargin">
+         <number>5</number>
+        </property>
+        <item>
+         <widget class="QLabel" name="label_7">
+          <property name="minimumSize">
+           <size>
+            <width>60</width>
+            <height>30</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Filter:</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="filter_input">
+          <property name="minimumSize">
+           <size>
+            <width>981</width>
+            <height>30</height>
+           </size>
+          </property>
+          <property name="echoMode">
+           <enum>QLineEdit::Normal</enum>
+          </property>
+          <property name="placeholderText">
+           <string>请输入合法的BPF语言</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer">
+          <property name="minimumSize">
+           <size>
+            <width>23</width>
+            <height>23</height>
+           </size>
+          </property>
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QPushButton" name="go">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>30</width>
+            <height>30</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>GO</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer_5">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>18</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_5">
+      <item>
+       <widget class="QListView" name="pkt_list">
+        <property name="minimumSize">
+         <size>
+          <width>331</width>
+          <height>691</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <property name="leftMargin">
+         <number>10</number>
+        </property>
+        <property name="topMargin">
+         <number>10</number>
+        </property>
+        <property name="rightMargin">
+         <number>10</number>
+        </property>
+        <property name="bottomMargin">
+         <number>10</number>
+        </property>
+        <item>
+         <widget class="QLabel" name="label_3">
+          <property name="minimumSize">
+           <size>
+            <width>801</width>
+            <height>31</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>----Original packet----</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_4">
+          <property name="leftMargin">
+           <number>5</number>
+          </property>
+          <property name="topMargin">
+           <number>5</number>
+          </property>
+          <property name="rightMargin">
+           <number>5</number>
+          </property>
+          <property name="bottomMargin">
+           <number>5</number>
+          </property>
+          <item>
+           <widget class="QScrollArea" name="scrollArea">
+            <property name="minimumSize">
+             <size>
+              <width>551</width>
+              <height>231</height>
+             </size>
+            </property>
+            <property name="widgetResizable">
+             <bool>true</bool>
+            </property>
+            <widget class="QWidget" name="scrollAreaWidgetContents">
+             <property name="geometry">
+              <rect>
+               <x>0</x>
+               <y>0</y>
+               <width>549</width>
+               <height>244</height>
+              </rect>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout">
+              <item>
+               <widget class="QLabel" name="summary">
+                <property name="minimumSize">
+                 <size>
+                  <width>500</width>
+                  <height>220</height>
+                 </size>
+                </property>
+                <property name="frameShape">
+                 <enum>QFrame::NoFrame</enum>
+                </property>
+                <property name="text">
+                 <string>summary</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+                </property>
+                <property name="wordWrap">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </widget>
+          </item>
+          <item>
+           <widget class="QScrollArea" name="scrollArea_2">
+            <property name="widgetResizable">
+             <bool>true</bool>
+            </property>
+            <widget class="QWidget" name="scrollAreaWidgetContents_2">
+             <property name="geometry">
+              <rect>
+               <x>0</x>
+               <y>0</y>
+               <width>255</width>
+               <height>230</height>
+              </rect>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout_4">
+              <item>
+               <widget class="QLabel" name="workbench">
+                <property name="minimumSize">
+                 <size>
+                  <width>231</width>
+                  <height>200</height>
+                 </size>
+                </property>
+                <property name="text">
+                 <string>workbench</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+                </property>
+                <property name="wordWrap">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_2">
+          <property name="minimumSize">
+           <size>
+            <width>811</width>
+            <height>30</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>----Packet_Editor----</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <property name="leftMargin">
+           <number>5</number>
+          </property>
+          <property name="topMargin">
+           <number>5</number>
+          </property>
+          <property name="rightMargin">
+           <number>5</number>
+          </property>
+          <property name="bottomMargin">
+           <number>5</number>
+          </property>
+          <item>
+           <widget class="QPlainTextEdit" name="HexTextEdit">
+            <property name="minimumSize">
+             <size>
+              <width>541</width>
+              <height>280</height>
+             </size>
+            </property>
+            <property name="centerOnScroll">
+             <bool>false</bool>
+            </property>
+            <property name="placeholderText">
+             <string>hex</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPlainTextEdit" name="AsciiTextEdit">
+            <property name="minimumSize">
+             <size>
+              <width>248</width>
+              <height>280</height>
+             </size>
+            </property>
+            <property name="tabChangesFocus">
+             <bool>false</bool>
+            </property>
+            <property name="placeholderText">
+             <string>ascii</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_3">
+          <property name="leftMargin">
+           <number>5</number>
+          </property>
+          <property name="topMargin">
+           <number>5</number>
+          </property>
+          <property name="rightMargin">
+           <number>5</number>
+          </property>
+          <property name="bottomMargin">
+           <number>5</number>
+          </property>
+          <item>
+           <widget class="QPushButton" name="pushButton">
+            <property name="minimumSize">
+             <size>
+              <width>113</width>
+              <height>41</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>Save</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pushButton_2">
+            <property name="minimumSize">
+             <size>
+              <width>113</width>
+              <height>41</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>Recover</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pushButton_3">
+            <property name="minimumSize">
+             <size>
+              <width>113</width>
+              <height>41</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>Send</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pushButton_4">
+            <property name="minimumSize">
+             <size>
+              <width>113</width>
+              <height>41</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>备用</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_2">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1277</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="actionOpen"/>
+    <addaction name="actionSave"/>
+    <addaction name="actionSave_to"/>
+    <addaction name="separator"/>
+    <addaction name="actionExit"/>
+   </widget>
+   <widget class="QMenu" name="menuTools">
+    <property name="title">
+     <string>Tools</string>
+    </property>
+    <addaction name="actionSearch"/>
+   </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>Help</string>
+    </property>
+    <addaction name="actionDocs"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuTools"/>
+   <addaction name="menuHelp"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionOpen">
+   <property name="icon">
+    <iconset>
+     <normaloff>static/open.jpg</normaloff>static/open.jpg</iconset>
+   </property>
+   <property name="text">
+    <string>  Open</string>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>15</pointsize>
+    </font>
+   </property>
+  </action>
+  <action name="actionExit">
+   <property name="icon">
+    <iconset>
+     <normaloff>static/exit2.jpg</normaloff>static/exit2.jpg</iconset>
+   </property>
+   <property name="text">
+    <string>  Exit</string>
+   </property>
+  </action>
+  <action name="actionSave">
+   <property name="icon">
+    <iconset>
+     <normaloff>static/save.jpg</normaloff>static/save.jpg</iconset>
+   </property>
+   <property name="text">
+    <string>  Save</string>
+   </property>
+  </action>
+  <action name="actionSave_to">
+   <property name="icon">
+    <iconset>
+     <normaloff>static/saveto.jpg</normaloff>static/saveto.jpg</iconset>
+   </property>
+   <property name="text">
+    <string>  Save to</string>
+   </property>
+  </action>
+  <action name="actionSearch">
+   <property name="icon">
+    <iconset>
+     <normaloff>static/search.jpg</normaloff>static/search.jpg</iconset>
+   </property>
+   <property name="text">
+    <string>  Search</string>
+   </property>
+  </action>
+  <action name="actionDocs">
+   <property name="icon">
+    <iconset>
+     <normaloff>static/doc.jpg</normaloff>static/doc.jpg</iconset>
+   </property>
+   <property name="text">
+    <string>Docs</string>
+   </property>
+  </action>
+ </widget>
+ <resources>
+  <include location="resource.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>go</sender>
+   <signal>clicked()</signal>
+   <receiver>Analyze</receiver>
+   <slot>go_on_clicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1156</x>
+     <y>151</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1217</x>
+     <y>115</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pkt_list</sender>
+   <signal>clicked(QModelIndex)</signal>
+   <receiver>Analyze</receiver>
+   <slot>item_on_clicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>69</x>
+     <y>220</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>12</x>
+     <y>120</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>HexTextEdit</sender>
+   <signal>textChanged()</signal>
+   <receiver>Analyze</receiver>
+   <slot>hex_changed()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>497</x>
+     <y>615</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>384</x>
+     <y>529</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>AsciiTextEdit</sender>
+   <signal>textChanged()</signal>
+   <receiver>Analyze</receiver>
+   <slot>ascii_changed()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1248</x>
+     <y>814</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>940</x>
+     <y>529</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton</sender>
+   <signal>clicked()</signal>
+   <receiver>Analyze</receiver>
+   <slot>save_on_clicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>452</x>
+     <y>845</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>378</x>
+     <y>849</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_2</sender>
+   <signal>clicked()</signal>
+   <receiver>Analyze</receiver>
+   <slot>recover_on_clicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>564</x>
+     <y>841</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>500</x>
+     <y>880</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_3</sender>
+   <signal>clicked()</signal>
+   <receiver>Analyze</receiver>
+   <slot>send_on_clicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>779</x>
+     <y>871</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>618</x>
+     <y>888</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_4</sender>
+   <signal>clicked()</signal>
+   <receiver>Analyze</receiver>
+   <slot>more_on_clicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>894</x>
+     <y>871</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>718</x>
+     <y>885</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionOpen</sender>
+   <signal>triggered()</signal>
+   <receiver>Analyze</receiver>
+   <slot>open_triggered()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>613</x>
+     <y>457</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionSave</sender>
+   <signal>triggered()</signal>
+   <receiver>Analyze</receiver>
+   <slot>save_triggered()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>613</x>
+     <y>457</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>go_on_clicked()</slot>
+  <slot>item_on_clicked()</slot>
+  <slot>hex_changed()</slot>
+  <slot>ascii_changed()</slot>
+  <slot>save_on_clicked()</slot>
+  <slot>recover_on_clicked()</slot>
+  <slot>send_on_clicked()</slot>
+  <slot>more_on_clicked()</slot>
+  <slot>open_triggered()</slot>
+  <slot>save_triggered()</slot>
+  <slot>search_triggered()</slot>
+  <slot>save_to_triggered()</slot>
+ </slots>
+</ui>

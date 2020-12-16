@@ -1,0 +1,6 @@
+<RCC>
+  <qresource prefix="picture">
+    <file>static/logo_analyze.png</file>
+    <file>logo.png</file>
+  </qresource>
+</RCC>
