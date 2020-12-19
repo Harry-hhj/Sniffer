@@ -14,7 +14,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_Analyze(object):
     def setupUi(self, Analyze):
         Analyze.setObjectName("Analyze")
-        Analyze.resize(1277, 916)
+        Analyze.resize(1284, 926)
         self.centralwidget = QtWidgets.QWidget(Analyze)
         self.centralwidget.setObjectName("centralwidget")
         self.verticalLayout_3 = QtWidgets.QVBoxLayout(self.centralwidget)
@@ -88,7 +88,7 @@ class Ui_Analyze(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollArea.setObjectName("scrollArea")
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 549, 244))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 534, 244))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout.setObjectName("verticalLayout")
@@ -105,7 +105,7 @@ class Ui_Analyze(object):
         self.scrollArea_2.setWidgetResizable(True)
         self.scrollArea_2.setObjectName("scrollArea_2")
         self.scrollAreaWidgetContents_2 = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(0, 0, 255, 230))
+        self.scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(0, 0, 255, 240))
         self.scrollAreaWidgetContents_2.setObjectName("scrollAreaWidgetContents_2")
         self.verticalLayout_4 = QtWidgets.QVBoxLayout(self.scrollAreaWidgetContents_2)
         self.verticalLayout_4.setObjectName("verticalLayout_4")
@@ -163,7 +163,7 @@ class Ui_Analyze(object):
         self.verticalLayout_3.addLayout(self.horizontalLayout_5)
         Analyze.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(Analyze)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1277, 22))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1284, 22))
         self.menubar.setObjectName("menubar")
         self.menuFile = QtWidgets.QMenu(self.menubar)
         self.menuFile.setObjectName("menuFile")
@@ -227,12 +227,12 @@ class Ui_Analyze(object):
         self.pushButton.clicked.connect(Analyze.save_on_clicked)
         self.pushButton_2.clicked.connect(Analyze.recover_on_clicked)
         self.pushButton_3.clicked.connect(Analyze.send_on_clicked)
-        self.pushButton_4.clicked.connect(Analyze.more_on_clicked)
         self.actionOpen.triggered.connect(Analyze.open_triggered)
         self.actionSave.triggered.connect(Analyze.save_triggered)
+        self.pushButton_4.clicked.connect(Analyze.quick_modify_on_clicked)
         QtCore.QMetaObject.connectSlotsByName(Analyze)
 
-        self.pushButton_4.setVisible(False)
+        self.pkt_list.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
 
     def retranslateUi(self, Analyze):
         _translate = QtCore.QCoreApplication.translate
@@ -249,7 +249,7 @@ class Ui_Analyze(object):
         self.pushButton.setText(_translate("Analyze", "Save"))
         self.pushButton_2.setText(_translate("Analyze", "Recover"))
         self.pushButton_3.setText(_translate("Analyze", "Send"))
-        self.pushButton_4.setText(_translate("Analyze", "备用"))
+        self.pushButton_4.setText(_translate("Analyze", "Quick Modify"))
         self.menuFile.setTitle(_translate("Analyze", "File"))
         self.menuTools.setTitle(_translate("Analyze", "Tools"))
         self.menuHelp.setTitle(_translate("Analyze", "Help"))

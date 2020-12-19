@@ -17,8 +17,9 @@ def TimeStamp2Time(timeStamp):
 
 
 class Sniffer(object):
-    def __init__(self, iface="en0", session="", filter="ip", count=0, timeout=None):
+    def __init__(self, iface="en0", session="", filter="ip", count=0, timeout=None, prn=None):
         self.dpkts = None
+        self.dpkt_list = []
         self.auto_show = True
         self.sniffer = None
         if iface == '':
@@ -34,12 +35,18 @@ class Sniffer(object):
             self.session = None
         self.count = count
         self.timeout = timeout
-        self._last_time = None
+        self._last_time = time.time()
+        self.prn = prn
 
     def packet_callback(self, packet):
-        pass
         # print("Flow rate: ", packet['IP'].len / 1024 / 1024 / (time.time() - self._last_time))
-        summary = packet.summary()
+        if time.time() - self._last_time > 0.2:
+            self._last_time = time.time()
+            summary = packet.summary()
+            self.dpkt_list.append(packet)
+            self.dpkts = PacketList(self.dpkt_list)
+            if self.prn is not None:
+                self.prn.emit(summary)
         # print(summary)
         # packet.draw()
         # print(type(hexdump(packet)))
@@ -68,17 +75,23 @@ class Sniffer(object):
     def set(self, param, value):
         pass
 
-    def save(self):
-        wrpcap("{}.pcap".format(TimeStamp2Time(time.time())), self.dpkts)
+    def save(self, name=None):
+        if name is None:
+            wrpcap("./pcap/{}.pcap".format(TimeStamp2Time(time.time())), self.dpkts)
+        else:
+            wrpcap("./pcap/{}.pcap".format(str(name)))
 
-    def load(self, file="./pcap/2020-12-16 13:54:18.cap"):
-        self.dpkts = sniff(offline=file, filter='tcp')
+    def load(self, file="./pcap/2020-12-16 13:54:18.pcap", filter=''):
+        self.dpkts = sniff(offline=file, filter=filter)
 
     def search(self, string):
         for pkt in self.dpkts:
-            if string in pkt:
+            if string in pkt.show(dump=True):
                 print('='*30)
                 pkt.draw()
+
+    def modify(self, idx):
+        self.dpkts[idx].replace( IP.src, "192.168.1.1", "10.0.0.1" )
 
     def draw(self):
         self.dpkts.conversations(type='jpg', target="> tmp/test.jpg")
@@ -104,21 +117,22 @@ if __name__ == '__main__':
 
     # s = Sniffer(iface="en0", session='', filter='tcp', timeout=10)
     # s.run()
-    # s.draw()
     # print(str(s.dpkts))
+    # print(s.dpkts.sessions())
     # s.search('HTTP/1.1')
 
-    # s = Sniffer()
-    # s.load()
-    # input('asd')
-    # s.draw()
+    s = Sniffer()
+    s.load()
+    print('--'*10)
+    print('--'*10)
+    print('--'*10)
+    s.dpkts = s.dpkts.replace(IP.ttl, 64)
+    s.dpkts.show()
+    print('--'*20)
+    for dpk in s.dpkts:
+        if dpk['IP'].ttl != 64:
+            print(dpk['IP'].ttl)
+    print(s.dpkts.sr()[0].show())
+    print(s.dpkts.sr()[1].show())
 
-    import numpy as np
 
-    def find_diff(a, b):
-        diff_index = np.array(list(a)) != np.array(list(b))
-        print(diff_index)
-        print(np.where(diff_index==True)[0].tolist())
-
-
-    find_diff("aafsjdls;afjkdls;kf", "aafsjdes;afjkdws;kf")
