@@ -16,6 +16,7 @@ from main import Sniffer
 from scapy.all import *
 import numpy as np
 import time
+import os
 
 
 # show_interfaces()
@@ -224,15 +225,23 @@ class SubWindow_capture(QtWidgets.QMainWindow, Ui_Capture):
                     }
                 ''')
 
+        self._last_update = time.time()
+        self._back_status = False
+
     def myupdate(self, string):
-        output = str(self.sniffer.dpkts) + '\nExtract sessions from packets: ' + str(
-            len(self.sniffer.dpkts.sessions().keys())) + '.'
         self.summaries.append(string)
-        self.output.setText(output)
-        self.slm.setStringList(self.summaries)  # 将数据设置到model
+        t = time.time()
+        if t - self._last_update >= 0.4:
+            self._last_update = t
+            self.slm.setStringList(self.summaries)  # 将数据设置到model
+            self.dpkts = PacketList(self.sniffer.dpkt_list)
+            output = str(self.dpkts) + '\nExtract sessions from packets: ' + str(
+                len(self.dpkts.sessions().keys())) + '.'
+            self.output.setText(output)
 
     def backRun(self, signal):
         try:
+            self._back_status = True
             iface = self.iface.text()
             if iface == '':
                 iface = 'en0'
@@ -243,8 +252,6 @@ class SubWindow_capture(QtWidgets.QMainWindow, Ui_Capture):
                 timeout = None
             else:
                 timeout = eval(self.timeout.text())
-            if count == 0 and timeout is None:
-                timeout = 10
             password = self.password.text()
             self.sniffer = Sniffer(iface=iface, filter=filter, session=session, count=count, timeout=timeout,
                                    prn=self.update_signal)
@@ -254,8 +261,8 @@ class SubWindow_capture(QtWidgets.QMainWindow, Ui_Capture):
             for dpkt in self.sniffer.dpkts:
                 summary = dpkt.summary()
                 self.summaries.append(summary)
+            self.slm.setStringList(self.summaries)  # 将数据设置到model
             self.output.setText(output)
-            import os
             try:
                 os.remove('tmp/test.jpg')
             except:
@@ -271,8 +278,9 @@ class SubWindow_capture(QtWidgets.QMainWindow, Ui_Capture):
             # self.picshow.setScene(self.scene)  # 将场景添加至视图
             pix = QPixmap('./tmp/test.jpg')
             self.QGP_item = QtWidgets.QGraphicsPixmapItem(pix)  # 创建像素图元
+            self.scene.clear()
             self.scene.addItem(self.QGP_item)
-
+            self._back_status = False
             signal.emit()
         except:
             pass
@@ -318,10 +326,16 @@ class SubWindow_capture(QtWidgets.QMainWindow, Ui_Capture):
         pass
 
     def pkts_double_clicked(self):
-        idx = self.pkt_list.currentIndex().row()  # 这个值就是所选的列表值
-        tmp = self.sniffer.dpkts[idx]
-        dialog = DetailDialog(tmp)
-        dialog.exec()
+        if not self._back_status:
+            idx = self.pkt_list.currentIndex().row()  # 这个值就是所选的列表值
+            tmp = self.sniffer.dpkts[idx]
+            dialog = DetailDialog(tmp)
+            dialog.exec()
+        else:
+            idx = self.pkt_list.currentIndex().row()  # 这个值就是所选的列表值
+            tmp = self.sniffer.dpkt_list[idx]
+            dialog = DetailDialog(tmp)
+            dialog.exec()
 
     def show_sessions(self):
         try:
@@ -332,9 +346,67 @@ class SubWindow_capture(QtWidgets.QMainWindow, Ui_Capture):
 
     def ip_refractor(self):
         print('IPrefractor')
+        try:
+            try:
+                os.remove('tmp/reserved.pcap')
+            except:
+                pass
+            wrpcap('tmp/reserved.pcap', self.sniffer.dpkts)
+            self.dpkts = sniff(offline='tmp/reserved.pcap', session=IPSession,
+                               filter=None if self.filter.text() == '' else self.filter.text())
+            output = str(self.sniffer.dpkts) + '\nExtract sessions from packets: ' + str(
+                len(self.sniffer.dpkts.sessions().keys())) + '.'
+            for dpkt in self.sniffer.dpkts:
+                summary = dpkt.summary()
+                self.summaries.append(summary)
+            self.slm.setStringList(self.summaries)  # 将数据设置到model
+            self.output.setText(output)
+            try:
+                os.remove('tmp/test.jpg')
+            except:
+                pass
+            self.sniffer.draw()
+            self.feedback.setText("Sniff done.")
+            pix = QPixmap('./tmp/test.jpg')
+            self.QGP_item = QtWidgets.QGraphicsPixmapItem(pix)  # 创建像素图元
+            self.scene.clear()
+            self.scene.addItem(self.QGP_item)
+
+            self.signal.emit()
+        except:
+            pass
 
     def tcp_refractor(self):
         print('TCPrefractor')
+        try:
+            try:
+                os.remove('tmp/reserved.pcap')
+            except:
+                pass
+            wrpcap('tmp/reserved.pcap', self.sniffer.dpkts)
+            self.dpkts = sniff(offline='tmp/reserved.pcap', session=TCPSession,
+                               filter=None if self.filter.text() == '' else self.filter.text())
+            output = str(self.sniffer.dpkts) + '\nExtract sessions from packets: ' + str(
+                len(self.sniffer.dpkts.sessions().keys())) + '.'
+            for dpkt in self.sniffer.dpkts:
+                summary = dpkt.summary()
+                self.summaries.append(summary)
+            self.slm.setStringList(self.summaries)  # 将数据设置到model
+            self.output.setText(output)
+            try:
+                os.remove('tmp/test.jpg')
+            except:
+                pass
+            self.sniffer.draw()
+            self.feedback.setText("Sniff done.")
+            pix = QPixmap('./tmp/test.jpg')
+            self.QGP_item = QtWidgets.QGraphicsPixmapItem(pix)  # 创建像素图元
+            self.scene.clear()
+            self.scene.addItem(self.QGP_item)
+
+            self.signal.emit()
+        except:
+            pass
 
 
 class DetailDialog(QtWidgets.QDialog, Ui_Detail):

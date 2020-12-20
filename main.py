@@ -40,13 +40,17 @@ class Sniffer(object):
 
     def packet_callback(self, packet):
         # print("Flow rate: ", packet['IP'].len / 1024 / 1024 / (time.time() - self._last_time))
-        if time.time() - self._last_time > 0.2:
-            self._last_time = time.time()
-            summary = packet.summary()
-            self.dpkt_list.append(packet)
-            self.dpkts = PacketList(self.dpkt_list)
-            if self.prn is not None:
-                self.prn.emit(summary)
+        # if time.time() - self._last_time > 0:
+        #     self._last_time = time.time()
+        #     summary = packet.summary()
+        #     self.dpkt_list.append(packet)
+        #     self.dpkts = PacketList(self.dpkt_list)
+        #     if self.prn is not None:
+        #         self.prn.emit(summary)
+        summary = packet.summary()
+        self.dpkt_list.append(packet)
+        if self.prn is not None:
+            self.prn.emit(summary)
         # print(summary)
         # packet.draw()
         # print(type(hexdump(packet)))
@@ -79,7 +83,7 @@ class Sniffer(object):
         if name is None:
             wrpcap("./pcap/{}.pcap".format(TimeStamp2Time(time.time())), self.dpkts)
         else:
-            wrpcap("./pcap/{}.pcap".format(str(name)))
+            wrpcap("./pcap/{}.pcap".format(str(name)), self.dpkts)
 
     def load(self, file="./pcap/2020-12-16 13:54:18.pcap", filter=''):
         self.dpkts = sniff(offline=file, filter=filter)
