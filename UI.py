@@ -78,6 +78,7 @@ class SubWindow_capture(QtWidgets.QMainWindow, Ui_Capture):
     signal = QtCore.pyqtSignal()
     update_signal = QtCore.pyqtSignal(str)
     time_signal = QtCore.pyqtSignal(str)
+    update_frame = QtCore.pyqtSignal()
 
     def __init__(self):
         super(SubWindow_capture, self).__init__()
@@ -87,14 +88,19 @@ class SubWindow_capture(QtWidgets.QMainWindow, Ui_Capture):
         self.slm = QtCore.QStringListModel()  # 创建mode
         self.slm.setStringList(self.summaries)  # 将数据设置到model
         self.pkt_list.setModel(self.slm)  # 绑定 listView 和 model
+        self.pushButton_7.setVisible(False)
+        self.pushButton_8.setVisible(False)
 
         self.zoomscale = 1.0
         self.scene = QtWidgets.QGraphicsScene()  # 创建场景
         self.graphicsView.setScene(self.scene)  # 将场景添加至视图
+        self.comboBox.addItems(['', 'IPSession', 'TCPSession'])
 
         self.signal.connect(self.show_sessions)
         self.update_signal.connect(self.myupdate)
         self.time_signal.connect(self.update_time)
+        self.update_frame.connect(self.add_pic)
+
         thread = threading.Thread(target=self.timer, args=(self.time_signal,))
         thread.setDaemon(True)
         thread.start()
@@ -280,7 +286,16 @@ class SubWindow_capture(QtWidgets.QMainWindow, Ui_Capture):
             if iface == '':
                 iface = 'en0'
             filter = self.filter.text()
-            session = self.session.text()
+            # session = self.session.text()
+            session = self.comboBox.currentIndex()
+            if session == 0:
+                session = ''
+            elif session == 1:
+                session = 'IPSession'
+            elif session == 2:
+                session = 'TCPSession'
+            else:
+                session = ''
             count = 0 if self.count.text() == '' else eval(self.count.text())
             if self.timeout.text() == '':
                 timeout = None
@@ -312,10 +327,7 @@ class SubWindow_capture(QtWidgets.QMainWindow, Ui_Capture):
             # self.scene = QGraphicsScene()  # 创建场景
             # self.scene.addItem(self.item)
             # self.picshow.setScene(self.scene)  # 将场景添加至视图
-            pix = QPixmap('./tmp/test.jpg')
-            self.QGP_item = QtWidgets.QGraphicsPixmapItem(pix)  # 创建像素图元
-            self.scene.clear()
-            self.scene.addItem(self.QGP_item)
+            self.update_frame.emit()
             self._back_status = False
             signal.emit()
         except:
@@ -337,6 +349,7 @@ class SubWindow_capture(QtWidgets.QMainWindow, Ui_Capture):
         self.summaries = []
         self.slm.setStringList(self.summaries)  # 将数据设置到model
         self.cnt = [0,0,0,0]
+        self.output.clear()
         self.feedback.setText("Begin to sniff........Please wait.")
         thread = threading.Thread(target=self.backRun, args=(self.signal,))
         thread.setDaemon(True)
@@ -357,6 +370,12 @@ class SubWindow_capture(QtWidgets.QMainWindow, Ui_Capture):
 
     def save_graph_on_clicked(self):
         copy_file()
+
+    def add_pic(self):
+        pix = QPixmap('./tmp/test.jpg')
+        self.QGP_item = QtWidgets.QGraphicsPixmapItem(pix)  # 创建像素图元
+        self.scene.clear()
+        self.scene.addItem(self.QGP_item)
 
     def text_changed(self):
         # 没有语法检查器，所以不实现自动检测输入变化
@@ -444,6 +463,9 @@ class SubWindow_capture(QtWidgets.QMainWindow, Ui_Capture):
             self.signal.emit()
         except:
             print('TCP failed')
+
+    def stop_backrun(self):
+        pass
 
 
 class DetailDialog(QtWidgets.QDialog, Ui_Detail):
