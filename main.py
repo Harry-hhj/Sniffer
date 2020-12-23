@@ -37,6 +37,7 @@ class Sniffer(object):
         self.timeout = timeout
         self._last_time = time.time()
         self.prn = prn
+        # self.packet = None
 
     def packet_callback(self, packet):
         # print("Flow rate: ", packet['IP'].len / 1024 / 1024 / (time.time() - self._last_time))
@@ -50,6 +51,7 @@ class Sniffer(object):
         summary = packet.summary()
         self.dpkt_list.append(packet)
         if self.prn is not None:
+            # self.packet = packet
             self.prn.emit(summary)
         # print(summary)
         # packet.draw()
@@ -125,18 +127,27 @@ if __name__ == '__main__':
     # print(s.dpkts.sessions())
     # s.search('HTTP/1.1')
 
-    s = Sniffer()
-    s.load()
-    print('--'*10)
-    print('--'*10)
-    print('--'*10)
-    s.dpkts = s.dpkts.replace(IP.ttl, 64)
-    s.dpkts.show()
-    print('--'*20)
-    for dpk in s.dpkts:
-        if dpk['IP'].ttl != 64:
-            print(dpk['IP'].ttl)
-    print(s.dpkts.sr()[0].show())
-    print(s.dpkts.sr()[1].show())
+    # s = Sniffer()
+    # s.load()
+    # print('--'*10)
+    # print('--'*10)
+    # print('--'*10)
+    # s.dpkts = s.dpkts.replace(IP.ttl, 64)
+    # s.dpkts.show()
+    # print('--'*20)
+    # for dpk in s.dpkts:
+    #     if dpk['IP'].ttl != 64:
+    #         print(dpk['IP'].ttl)
+    # print(s.dpkts.sr()[0].show())
+    # print(s.dpkts.sr()[1].show())
 
-
+    dpkts = sniff(timeout=5)
+    print(dpkts)
+    try:
+        import os
+        os.remove('tmp/reserved.pcap')
+    except:
+        pass
+    wrpcap('tmp/reserved.pcap', dpkts)
+    dpkts = sniff(offline='tmp/reserved.pcap', session=TCPSession, filter='')
+    print(dpkts)

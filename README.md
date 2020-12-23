@@ -12,6 +12,11 @@
 ```shell script
 pip3 install -r requirements.txt
 ```
+运行项目：
+```shell script
+sudo python UI.py
+```
+注意：此项目涉及网卡抓包，需要root权限运行，可以通过`sudo chmod 777 UI.py`完成授权。
 
 ## 功能说明
 项目主界面为4个ui，一个为*Sniffer*入口，其余三个分别为实时抓包界面caputre、加载分析修改界面analyze以及网络环境监视界面monitor。本项目

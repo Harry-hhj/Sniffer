@@ -105,7 +105,7 @@ class SubWindow_capture(QtWidgets.QMainWindow, Ui_Capture):
                             border:none;
                             font-size:16px;
                             font-weight:700;
-                            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+                            font-family: "Helvetica Neue", Helvetica, Arial;
                             color:green;
                         ''')
 
@@ -113,7 +113,7 @@ class SubWindow_capture(QtWidgets.QMainWindow, Ui_Capture):
                     border:none;
                     font-size:16px;
                     font-weight:700;
-                    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+                    font-family: "Helvetica Neue", Helvetica, Arial;
                     color:blue;
                 ''')
 
@@ -121,7 +121,7 @@ class SubWindow_capture(QtWidgets.QMainWindow, Ui_Capture):
                     border:none;
                     font-size:16px;
                     font-weight:700;
-                    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+                    font-family: "Helvetica Neue", Helvetica, Arial;
                     color:gray;
                 ''')
 
@@ -129,6 +129,16 @@ class SubWindow_capture(QtWidgets.QMainWindow, Ui_Capture):
                     QPushButton{
                         border:none;
                         font-size:16px;
+                        font-weight:bold;
+                    }
+                ''')
+
+        self.pushButton_9.setStyleSheet('''
+                    QPushButton{
+                        border:none;
+                        font-size:16px;
+                        color:red;
+                        font-weight:bold;
                     }
                 ''')
 
@@ -227,17 +237,41 @@ class SubWindow_capture(QtWidgets.QMainWindow, Ui_Capture):
 
         self._last_update = time.time()
         self._back_status = False
+        self.init_once = True
+
+        self.cnt = [0,0,0,0]
 
     def myupdate(self, string):
         self.summaries.append(string)
-        t = time.time()
-        if t - self._last_update >= 0.4:
-            self._last_update = t
-            self.slm.setStringList(self.summaries)  # 将数据设置到model
-            self.dpkts = PacketList(self.sniffer.dpkt_list)
-            output = str(self.dpkts) + '\nExtract sessions from packets: ' + str(
-                len(self.dpkts.sessions().keys())) + '.'
-            self.output.setText(output)
+        # t = time.time()
+        # if self.init_once:
+        #     self._last_update = t
+        #     self.init_once = False
+        #     self.slm.setStringList(self.summaries)  # 将数据设置到model
+        #     self.dpkts = PacketList(self.sniffer.dpkt_list)
+        #     output = str(self.dpkts) + '\nExtract sessions from packets: ' + str(
+        #         len(self.dpkts.sessions().keys())) + '.'
+        #     self.output.setText(output)
+        # elif t - self._last_update >= 0.5:
+        #     self._last_update = t
+        #     self.slm.setStringList(self.summaries)  # 将数据设置到model
+        #     self.dpkts = self.dpkts + PacketList([self.sniffer.packet])
+        #     self.dpkts.listname = 'PacketList'
+        #     output = str(self.dpkts) + '\nExtract sessions from packets: ' + str(
+        #         len(self.dpkts.sessions().keys())) + '.'
+        #     self.output.setText(output)
+        self.slm.setStringList(self.summaries)  # 将数据设置到model
+        if 'TCP' in string:
+            self.cnt[0] += 1
+        elif 'ICMP' in string:
+            self.cnt[1] += 1
+        elif 'UDP' in string:
+            self.cnt[2] += 1
+        else:
+            self.cnt[3] += 1
+        output = 'PacketList: <TCP: {}, ICMP: {}, UDP: {}, Other: {}>'.format(self.cnt[0], self.cnt[1],
+                                                                              self.cnt[2], self.cnt[3])
+        self.output.setText(output)
 
     def backRun(self, signal):
         try:
@@ -252,6 +286,8 @@ class SubWindow_capture(QtWidgets.QMainWindow, Ui_Capture):
                 timeout = None
             else:
                 timeout = eval(self.timeout.text())
+            if timeout is None and count == 0:
+                timeout = 10
             password = self.password.text()
             self.sniffer = Sniffer(iface=iface, filter=filter, session=session, count=count, timeout=timeout,
                                    prn=self.update_signal)
@@ -300,6 +336,7 @@ class SubWindow_capture(QtWidgets.QMainWindow, Ui_Capture):
         self.go.setVisible(False)
         self.summaries = []
         self.slm.setStringList(self.summaries)  # 将数据设置到model
+        self.cnt = [0,0,0,0]
         self.feedback.setText("Begin to sniff........Please wait.")
         thread = threading.Thread(target=self.backRun, args=(self.signal,))
         thread.setDaemon(True)
@@ -406,7 +443,7 @@ class SubWindow_capture(QtWidgets.QMainWindow, Ui_Capture):
 
             self.signal.emit()
         except:
-            pass
+            print('TCP failed')
 
 
 class DetailDialog(QtWidgets.QDialog, Ui_Detail):
