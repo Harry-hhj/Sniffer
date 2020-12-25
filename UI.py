@@ -1,8 +1,5 @@
-import queue
-
 from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtGui import QImage, QPixmap, QFont
-from scapy.layers.l2 import Ether
 
 from entry import Ui_Entry
 from capture import Ui_Capture
@@ -17,6 +14,8 @@ from scapy.all import *
 import numpy as np
 import time
 import os
+import ctypes
+import inspect
 
 
 # show_interfaces()
@@ -51,6 +50,25 @@ def TimeStamp2Time(timeStamp):
     timeTmp = time.localtime(timeStamp)  # time.localtime()格式化时间戳为本地时间
     myTime = time.strftime("%Y-%m-%d %H:%M:%S", timeTmp)  # 将本地时间格式化为字符串
     return myTime
+
+
+def _async_raise(tid, exctype):
+    """raises the exception, performs cleanup if needed"""
+    tid = ctypes.c_long(tid)
+    if not inspect.isclass(exctype):
+        exctype = type(exctype)
+    res = ctypes.pythonapi.PyThreadState_SetAsyncExc(tid, ctypes.py_object(exctype))
+    if res == 0:
+        raise ValueError("invalid thread id")
+    elif res != 1:
+        # """if it returns a number greater than one, you're in trouble,
+        # and you should call it again with exc=NULL to revert the effect"""
+        ctypes.pythonapi.PyThreadState_SetAsyncExc(tid, None)
+        raise SystemError("PyThreadState_SetAsyncExc failed")
+
+
+def stop_thread(thread):
+    _async_raise(thread.ident, SystemExit)
 
 
 class MainWindow(QtWidgets.QMainWindow, Ui_Entry):
@@ -100,6 +118,8 @@ class SubWindow_capture(QtWidgets.QMainWindow, Ui_Capture):
         self.update_signal.connect(self.myupdate)
         self.time_signal.connect(self.update_time)
         self.update_frame.connect(self.add_pic)
+
+        self.thread = None
 
         thread = threading.Thread(target=self.timer, args=(self.time_signal,))
         thread.setDaemon(True)
@@ -249,6 +269,7 @@ class SubWindow_capture(QtWidgets.QMainWindow, Ui_Capture):
 
     def myupdate(self, string):
         self.summaries.append(string)
+        # old_method
         # t = time.time()
         # if self.init_once:
         #     self._last_update = t
@@ -351,9 +372,9 @@ class SubWindow_capture(QtWidgets.QMainWindow, Ui_Capture):
         self.cnt = [0,0,0,0]
         self.output.clear()
         self.feedback.setText("Begin to sniff........Please wait.")
-        thread = threading.Thread(target=self.backRun, args=(self.signal,))
-        thread.setDaemon(True)
-        thread.start()
+        self.thread = threading.Thread(target=self.backRun, args=(self.signal,))
+        self.thread.setDaemon(True)
+        self.thread.start()
 
     def zoom_in_on_clicked(self):
         self.zoomscale = self.zoomscale + 0.05
@@ -395,7 +416,7 @@ class SubWindow_capture(QtWidgets.QMainWindow, Ui_Capture):
 
     def show_sessions(self):
         try:
-            dialog = ListDialog(self.sniffer.dpkts)
+            dialog = KWFListDialog(self.sniffer.dpkts) #TODO 新建一个按钮或者重用下面的按钮来实现包过滤，这个该会ListDialog
             dialog.exec()
         except:
             pass
@@ -465,7 +486,7 @@ class SubWindow_capture(QtWidgets.QMainWindow, Ui_Capture):
             print('TCP failed')
 
     def stop_backrun(self):
-        pass
+        stop_thread(self.thread)
 
 
 class DetailDialog(QtWidgets.QDialog, Ui_Detail):
@@ -738,6 +759,60 @@ class ListDialog(QtWidgets.QDialog, Ui_ListDialog):
         idx = self.listView.currentIndex().row()  # 这个值就是所选的列表值
         dpkts = self.sessions[list(self.sessions.keys())[idx]]
         dialog = ListDialogDetail(dpkts)
+        dialog.exec()
+
+
+class KWFListDialog(QtWidgets.QDialog, Ui_ListDialog):
+    def __init__(self, dpkts):
+        super(KWFListDialog, self).__init__()
+        self.setupUi(self)
+        self.listView.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
+        self.pushButton.setVisible(True)
+        self.pushButton_2.setVisible(False)
+        self.pushButton_3.setVisible(False)
+        self.pushButton_4.setVisible(False)
+        self.lineEdit.setVisible(True)
+        self.label.setText('----您可以在此输入关键字进行包过滤----')
+        self.dpkts = dpkts
+        self.l = []
+        for pkt in self.dpkts:
+            self.l.append(pkt.summary())
+        self.slm = QtCore.QStringListModel()  # 创建mode
+        self.slm.setStringList(self.l)  # 将数据设置到model
+        self.listView.setModel(self.slm)  # 绑定 listView 和 model
+
+    def func1(self):
+        keyword = self.lineEdit.text()
+        tmp = []
+        self.tmp_map = []
+        cnt = 0
+        for pkt in self.dpkts:
+            if keyword.strip() in pkt.show(dump=True):
+                tmp.append(pkt)
+                self.tmp_map.append(cnt)
+            cnt += 1
+        self.l = []
+        for pkt in tmp:
+            self.l.append(pkt.summary())
+        self.slm.setStringList(self.l)  # 将数据设置到model
+        self.label.setText('-----已根据关键字{}过滤数据包------'.format(keyword))
+
+    def func2(self):
+        pass
+
+    def func3(self):
+        pass
+
+    def func4(self):
+        pass
+
+    def return_pressed(self):
+        pass
+
+    def item_double_clicked(self):
+        idx = self.listView.currentIndex().row()  # 这个值就是所选的列表值
+        pkt = self.dpkts[self.tmp_map[idx]]
+        dialog = TextDialog(pkt.show(dump=True))
         dialog.exec()
 
 

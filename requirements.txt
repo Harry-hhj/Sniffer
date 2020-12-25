@@ -1,0 +1,4 @@
+numpy==1.19.4
+QtAwesome==1.0.2
+scapy==2.4.4
+PyQt5==5.15.2

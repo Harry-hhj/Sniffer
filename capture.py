@@ -225,7 +225,7 @@ class Ui_Capture(object):
         self.pushButton_6.clicked.connect(Capture.show_sessions)
         self.pushButton_7.clicked.connect(Capture.ip_refractor)
         self.pushButton_8.clicked.connect(Capture.tcp_refractor)
-        self.pushButton_8.clicked.connect(Capture.stop_backrun)
+        self.pushButton_9.clicked.connect(Capture.stop_backrun)
         self.filter.textChanged['QString'].connect(Capture.text_changed)
         self.pkt_list.doubleClicked['QModelIndex'].connect(Capture.pkts_double_clicked)
         self.pkt_list.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)

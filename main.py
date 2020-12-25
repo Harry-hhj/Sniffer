@@ -141,13 +141,15 @@ if __name__ == '__main__':
     # print(s.dpkts.sr()[0].show())
     # print(s.dpkts.sr()[1].show())
 
-    dpkts = sniff(timeout=5)
-    print(dpkts)
-    try:
-        import os
-        os.remove('tmp/reserved.pcap')
-    except:
-        pass
-    wrpcap('tmp/reserved.pcap', dpkts)
-    dpkts = sniff(offline='tmp/reserved.pcap', session=TCPSession, filter='')
-    print(dpkts)
+    # dpkts = sniff(timeout=5)
+    # print(dpkts)
+    # try:
+    #     import os
+    #     os.remove('tmp/reserved.pcap')
+    # except:
+    #     pass
+    # wrpcap('tmp/reserved.pcap', dpkts)
+    # dpkts = sniff(offline='tmp/reserved.pcap', session=TCPSession, filter='')
+    # print(dpkts)
+
+    IFACES.show(True)
