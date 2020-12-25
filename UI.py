@@ -112,7 +112,7 @@ class SubWindow_capture(QtWidgets.QMainWindow, Ui_Capture):
         self.zoomscale = 1.0
         self.scene = QtWidgets.QGraphicsScene()  # 创建场景
         self.graphicsView.setScene(self.scene)  # 将场景添加至视图
-        self.comboBox.addItems(['', 'IPSession', 'TCPSession'])
+        self.comboBox.addItems(['不进行整流', 'IPSession', 'TCPSession'])
 
         self.signal.connect(self.show_sessions)
         self.update_signal.connect(self.myupdate)
@@ -120,6 +120,12 @@ class SubWindow_capture(QtWidgets.QMainWindow, Ui_Capture):
         self.update_frame.connect(self.add_pic)
 
         self.thread = None
+
+        import psutil
+        info = psutil.net_if_addrs()
+        for k, _ in info.items():
+            self.iface.addItem(k)
+
 
         thread = threading.Thread(target=self.timer, args=(self.time_signal,))
         thread.setDaemon(True)
@@ -268,7 +274,7 @@ class SubWindow_capture(QtWidgets.QMainWindow, Ui_Capture):
         self.cnt = [0,0,0,0]
 
     def myupdate(self, string):
-        self.summaries.append(string)
+        # self.summaries.append(string)
         # old_method
         # t = time.time()
         # if self.init_once:
@@ -287,7 +293,18 @@ class SubWindow_capture(QtWidgets.QMainWindow, Ui_Capture):
         #     output = str(self.dpkts) + '\nExtract sessions from packets: ' + str(
         #         len(self.dpkts.sessions().keys())) + '.'
         #     self.output.setText(output)
-        self.slm.setStringList(self.summaries)  # 将数据设置到model
+        # self.slm.setStringList(self.summaries)  # 将数据设置到model
+        t = time.time()
+        if t - self._last_update >= 0.5:
+            self._last_update = t
+            for str in self.summaries:
+                count = self.slm.rowCount()
+                self.slm.insertRow(count)
+                index = self.slm.index(count, 0)
+                self.slm.setData(index, str, QtCore.Qt.DisplayRole)
+            self.summaries.clear()
+        else:
+            self.summaries.append(string)
         if 'TCP' in string:
             self.cnt[0] += 1
         elif 'ICMP' in string:
@@ -303,9 +320,10 @@ class SubWindow_capture(QtWidgets.QMainWindow, Ui_Capture):
     def backRun(self, signal):
         try:
             self._back_status = True
-            iface = self.iface.text()
-            if iface == '':
-                iface = 'en0'
+            # iface = self.iface.text()
+            # if iface == '':
+            #     iface = 'en0'
+            iface = self.iface.currentText()
             filter = self.filter.text()
             # session = self.session.text()
             session = self.comboBox.currentIndex()

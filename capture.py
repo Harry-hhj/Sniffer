@@ -141,10 +141,17 @@ class Ui_Capture(object):
         self.label_5.setAlignment(QtCore.Qt.AlignCenter)
         self.label_5.setObjectName("label_5")
         self.gridLayout.addWidget(self.label_5, 3, 0, 1, 2)
-        self.iface = QtWidgets.QLineEdit(self.centralwidget)
+
+        # self.iface = QtWidgets.QLineEdit(self.centralwidget)
+        # self.iface.setMinimumSize(QtCore.QSize(150, 30))
+        # self.iface.setObjectName("iface")
+        # self.gridLayout.addWidget(self.iface, 1, 2, 1, 2)
+
+        self.iface = QtWidgets.QComboBox(self.centralwidget)
         self.iface.setMinimumSize(QtCore.QSize(150, 30))
         self.iface.setObjectName("iface")
         self.gridLayout.addWidget(self.iface, 1, 2, 1, 2)
+
         self.verticalLayout_2.addLayout(self.gridLayout)
         spacerItem5 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.verticalLayout_2.addItem(spacerItem5)
@@ -239,7 +246,7 @@ class Ui_Capture(object):
         Capture.setWindowTitle(_translate("Capture", "MainWindow"))
         self.label_7.setText(_translate("Capture", "Filter:"))
         self.filter.setPlaceholderText(_translate("Capture", "请输入合法的BPF语言"))
-        self.iface.setPlaceholderText(_translate("Capture", "en0"))
+        # self.iface.setPlaceholderText(_translate("Capture", "en0"))
         # self.session.setPlaceholderText(_translate("Capture", "e.g. TCPSession"))
         self.count.setPlaceholderText(_translate("Capture", "0"))
         self.timeout.setPlaceholderText(_translate("Capture", "5"))

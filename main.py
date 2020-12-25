@@ -121,11 +121,10 @@ if __name__ == '__main__':
     #             flags.append(dpkt['IP'].flags)
     # print(flags)
 
-    # s = Sniffer(iface="en0", session='', filter='tcp', timeout=10)
-    # s.run()
-    # print(str(s.dpkts))
-    # print(s.dpkts.sessions())
-    # s.search('HTTP/1.1')
+    s = Sniffer(iface="en5", session='', filter='tcp', timeout=10)
+    s.run()
+    print(str(s.dpkts))
+    print(s.dpkts.sessions())
 
     # s = Sniffer()
     # s.load()
@@ -151,5 +150,3 @@ if __name__ == '__main__':
     # wrpcap('tmp/reserved.pcap', dpkts)
     # dpkts = sniff(offline='tmp/reserved.pcap', session=TCPSession, filter='')
     # print(dpkts)
-
-    IFACES.show(True)
