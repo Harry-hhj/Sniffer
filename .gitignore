@@ -5,3 +5,6 @@ tmp/*
 test.py
 .DS_Store
 */.DS_Store
+build
+dist
+UI.spec

@@ -1,3 +1,19 @@
+# -*- coding: utf-8 -*- #
+# ------------------------------------------------------------------
+# File Name:        Sniffer.py
+# Author:           harry-hhj
+# Version:
+# Created:
+# Description:      Main Function:    按日增量清洗用户上课日志
+#                   Outer Parameters: date_key  eg： 20201215
+# Function List:    exit() -- exit the interpreter by raising SystemExit
+#                   getdlopenflags() -- returns flags to be used for dlopen() calls
+#                   getprofile() -- get the global profiling function
+# History:
+#       <author>        <version>       <time>      <desc>
+#       sacevan         ver0_1          2020/12/15  xxx
+# ------------------------------------------------------------------
+
 from scapy.all import *
 import time
 
@@ -25,7 +41,7 @@ class Sniffer(object):
         if iface == '':
             self.iface = iface
         else:
-            self.iface="en0"
+            self.iface=iface
         self.filter = filter
         if session == 'IPSession':
             self.session = IPSession
@@ -35,6 +51,7 @@ class Sniffer(object):
             self.session = None
         self.count = count
         self.timeout = timeout
+        print(timeout)
         self._last_time = time.time()
         self.prn = prn
         # self.packet = None
@@ -91,10 +108,7 @@ class Sniffer(object):
         self.dpkts = sniff(offline=file, filter=filter)
 
     def search(self, string):
-        for pkt in self.dpkts:
-            if string in pkt.show(dump=True):
-                print('='*30)
-                pkt.draw()
+        pass
 
     def modify(self, idx):
         self.dpkts[idx].replace( IP.src, "192.168.1.1", "10.0.0.1" )
@@ -121,10 +135,12 @@ if __name__ == '__main__':
     #             flags.append(dpkt['IP'].flags)
     # print(flags)
 
-    s = Sniffer(iface="en5", session='', filter='tcp', timeout=10)
+    s = Sniffer(iface="en0", filter='ip', timeout=2)
     s.run()
-    print(str(s.dpkts))
-    print(s.dpkts.sessions())
+    # print(str(s.dpkts.nsummary()))
+    for pkt in s.dpkts:
+        if pkt.haslayer(IP):
+            print(pkt['IP'].flags, int(pkt['IP'].flags))
 
     # s = Sniffer()
     # s.load()
@@ -150,3 +166,5 @@ if __name__ == '__main__':
     # wrpcap('tmp/reserved.pcap', dpkts)
     # dpkts = sniff(offline='tmp/reserved.pcap', session=TCPSession, filter='')
     # print(dpkts)
+
+    # print(sniff(iface='lo0', filter='icmp', timeout=5))

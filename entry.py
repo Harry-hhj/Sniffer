@@ -179,7 +179,7 @@ class Ui_Entry(object):
         _translate = QtCore.QCoreApplication.translate
         Entry.setWindowTitle(_translate("Entry", "MainWindow"))
         self.logo.setWhatsThis(_translate("Entry", "<html><head/><body><p><br/></p></body></html>"))
-        self.logo.setText(_translate("Entry", "<html><head/><body><p><img src=\"static/logo.png\" height=\"100\" width=\"430\"/></p></body></html>"))
+        self.logo.setText(_translate("Entry", "<html><head/><body><p><img src=\"./static/logo.png\" height=\"100\" width=\"430\"/></p></body></html>"))
         self.capture.setText(_translate("Entry", "         Capture       "))
         self.analyze.setText(_translate("Entry", "         Analyze       "))
         self.monitor.setText(_translate("Entry", "          Monitor      "))

@@ -1,5 +1,6 @@
 from PyQt5 import QtWidgets, QtCore
-from PyQt5.QtGui import QImage, QPixmap, QFont
+from PyQt5.QtGui import QImage, QPixmap, QFont, QPainter
+from PyQt5.QtChart import QLineSeries, QValueAxis, QChartView
 
 from entry import Ui_Entry
 from capture import Ui_Capture
@@ -8,7 +9,8 @@ from analyze import Ui_Analyze
 from TextDialog import Ui_TextDialog
 from ListDialog import Ui_ListDialog
 from Quick_Modify import Ui_Dialog as Ui_QMDialog
-from main import Sniffer
+from monitor import Ui_Monitor
+from Sniffer import Sniffer
 
 from scapy.all import *
 import numpy as np
@@ -83,7 +85,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_Entry):
         sub2.show()
 
     def monitor_on_clicked(self):
-        print("monitor_on_clicked")
+        dialog = Monitor()
+        dialog.exec()
 
     def exit_on_clicked(self):
         sys.exit()
@@ -106,7 +109,6 @@ class SubWindow_capture(QtWidgets.QMainWindow, Ui_Capture):
         self.slm = QtCore.QStringListModel()  # 创建mode
         self.slm.setStringList(self.summaries)  # 将数据设置到model
         self.pkt_list.setModel(self.slm)  # 绑定 listView 和 model
-        self.pushButton_7.setVisible(False)
         self.pushButton_8.setVisible(False)
 
         self.zoomscale = 1.0
@@ -125,7 +127,6 @@ class SubWindow_capture(QtWidgets.QMainWindow, Ui_Capture):
         info = psutil.net_if_addrs()
         for k, _ in info.items():
             self.iface.addItem(k)
-
 
         thread = threading.Thread(target=self.timer, args=(self.time_signal,))
         thread.setDaemon(True)
@@ -269,9 +270,8 @@ class SubWindow_capture(QtWidgets.QMainWindow, Ui_Capture):
 
         self._last_update = time.time()
         self._back_status = False
-        self.init_once = True
 
-        self.cnt = [0,0,0,0]
+        self.cnt = [0, 0, 0, 0]
 
     def myupdate(self, string):
         # self.summaries.append(string)
@@ -340,8 +340,6 @@ class SubWindow_capture(QtWidgets.QMainWindow, Ui_Capture):
                 timeout = None
             else:
                 timeout = eval(self.timeout.text())
-            if timeout is None and count == 0:
-                timeout = 10
             password = self.password.text()
             self.sniffer = Sniffer(iface=iface, filter=filter, session=session, count=count, timeout=timeout,
                                    prn=self.update_signal)
@@ -387,7 +385,7 @@ class SubWindow_capture(QtWidgets.QMainWindow, Ui_Capture):
         self.go.setVisible(False)
         self.summaries = []
         self.slm.setStringList(self.summaries)  # 将数据设置到model
-        self.cnt = [0,0,0,0]
+        self.cnt = [0, 0, 0, 0]
         self.output.clear()
         self.feedback.setText("Begin to sniff........Please wait.")
         self.thread = threading.Thread(target=self.backRun, args=(self.signal,))
@@ -434,40 +432,45 @@ class SubWindow_capture(QtWidgets.QMainWindow, Ui_Capture):
 
     def show_sessions(self):
         try:
-            dialog = KWFListDialog(self.sniffer.dpkts) #TODO 新建一个按钮或者重用下面的按钮来实现包过滤，这个该会ListDialog
+            dialog = ListDialog(self.sniffer.dpkts)
             dialog.exec()
         except:
             pass
 
-    def ip_refractor(self):
-        print('IPrefractor')
+    def KWsearch(self):
+        # print('IPrefractor')
+        # try:
+        #     try:
+        #         os.remove('tmp/reserved.pcap')
+        #     except:
+        #         pass
+        #     wrpcap('tmp/reserved.pcap', self.sniffer.dpkts)
+        #     self.dpkts = sniff(offline='tmp/reserved.pcap', session=IPSession,
+        #                        filter=None if self.filter.text() == '' else self.filter.text())
+        #     output = str(self.sniffer.dpkts) + '\nExtract sessions from packets: ' + str(
+        #         len(self.sniffer.dpkts.sessions().keys())) + '.'
+        #     for dpkt in self.sniffer.dpkts:
+        #         summary = dpkt.summary()
+        #         self.summaries.append(summary)
+        #     self.slm.setStringList(self.summaries)  # 将数据设置到model
+        #     self.output.setText(output)
+        #     try:
+        #         os.remove('tmp/test.jpg')
+        #     except:
+        #         pass
+        #     self.sniffer.draw()
+        #     self.feedback.setText("Sniff done.")
+        #     pix = QPixmap('./tmp/test.jpg')
+        #     self.QGP_item = QtWidgets.QGraphicsPixmapItem(pix)  # 创建像素图元
+        #     self.scene.clear()
+        #     self.scene.addItem(self.QGP_item)
+        #
+        #     self.signal.emit()
+        # except:
+        #     pass
         try:
-            try:
-                os.remove('tmp/reserved.pcap')
-            except:
-                pass
-            wrpcap('tmp/reserved.pcap', self.sniffer.dpkts)
-            self.dpkts = sniff(offline='tmp/reserved.pcap', session=IPSession,
-                               filter=None if self.filter.text() == '' else self.filter.text())
-            output = str(self.sniffer.dpkts) + '\nExtract sessions from packets: ' + str(
-                len(self.sniffer.dpkts.sessions().keys())) + '.'
-            for dpkt in self.sniffer.dpkts:
-                summary = dpkt.summary()
-                self.summaries.append(summary)
-            self.slm.setStringList(self.summaries)  # 将数据设置到model
-            self.output.setText(output)
-            try:
-                os.remove('tmp/test.jpg')
-            except:
-                pass
-            self.sniffer.draw()
-            self.feedback.setText("Sniff done.")
-            pix = QPixmap('./tmp/test.jpg')
-            self.QGP_item = QtWidgets.QGraphicsPixmapItem(pix)  # 创建像素图元
-            self.scene.clear()
-            self.scene.addItem(self.QGP_item)
-
-            self.signal.emit()
+            dialog = KWFListDialog(self.sniffer.dpkts)
+            dialog.exec()
         except:
             pass
 
@@ -504,7 +507,17 @@ class SubWindow_capture(QtWidgets.QMainWindow, Ui_Capture):
             print('TCP failed')
 
     def stop_backrun(self):
-        stop_thread(self.thread)
+        try:
+            stop_thread(self.thread)
+        except:
+            pass
+
+    def closeEvent(self, event):
+        try:
+            stop_thread(self.thread)
+        except:
+            pass
+        self.close()
 
 
 class DetailDialog(QtWidgets.QDialog, Ui_Detail):
@@ -585,9 +598,9 @@ class SubWindow_analyze(QtWidgets.QMainWindow, Ui_Analyze):
                     row = i // 57
                     col = i % 57 - 9
                     if 0 <= col <= 47:
-                        print("self.hex1[0]\n" + self.hex1[0])
-                        print("self.hex1\n" + self.hex1)
-                        print("hex1_new\n" + hex1_new)
+                        # print("self.hex1[0]\n" + self.hex1[0])
+                        # print("self.hex1\n" + self.hex1)
+                        # print("hex1_new\n" + hex1_new)
                         self.add_log('The {} th is changed from {} to {}.'.format(row * 32 + col - col // 3,
                                                                                   self.hex1[row * 32 + col - col // 3],
                                                                                   hex1_new[i]))
@@ -633,8 +646,8 @@ class SubWindow_analyze(QtWidgets.QMainWindow, Ui_Analyze):
                     else:
                         self.sniffer.dpkts = self.sniffer.dpkts.replace(self.nameDict[list(self.nameDict)[r[0]]], r[1])
                 elif len(r) == 3:
-                    self.sniffer.dpkts = self.sniffer.dpkts.replace(self.nameDict[list(self.nameDict)[r[0]]], r[1],
-                                                                    r[2])
+                    self.sniffer.dpkts = self.sniffer.dpkts.replace(self.nameDict[list(self.nameDict)[r[0]]], int(r[1]),
+                                                                    int(r[2]))
             self.add_log('New dpkts Reload Done!')
             self.summaries = []
             for dpkt in self.sniffer.dpkts:
@@ -740,11 +753,11 @@ class ListDialog(QtWidgets.QDialog, Ui_ListDialog):
         super(ListDialog, self).__init__()
         self.setupUi(self)
         self.listView.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
-        self.pushButton.setVisible(True)
+        self.pushButton.setVisible(False)
         self.pushButton_2.setVisible(False)
         self.pushButton_3.setVisible(False)
         self.pushButton_4.setVisible(False)
-        self.lineEdit.setVisible(True)
+        self.lineEdit.setVisible(False)
         self.label.setText('----已根据Session对抓到的包进行分组----')
         self.sessions = dpkts.sessions()
         self.l = []
@@ -753,13 +766,14 @@ class ListDialog(QtWidgets.QDialog, Ui_ListDialog):
         self.slm = QtCore.QStringListModel()  # 创建mode
         self.slm.setStringList(self.l)  # 将数据设置到model
         self.listView.setModel(self.slm)  # 绑定 listView 和 model
+        self.pushButton.setText('保存')
 
     def func1(self):
-        self.pushButton.setText('保存')
-        idx = self.listView.currentIndex()
-        self.sniffer = Sniffer()
-        self.sniffer.dpkts = self.sessions[idx]
-        self.sniffer.save()
+        # idx = self.listView.currentIndex()
+        # self.sniffer = Sniffer()
+        # self.sniffer.dpkts = self.sessions[idx]
+        # self.sniffer.save()
+        pass
 
     def func2(self):
         pass
@@ -798,6 +812,7 @@ class KWFListDialog(QtWidgets.QDialog, Ui_ListDialog):
         self.slm = QtCore.QStringListModel()  # 创建mode
         self.slm.setStringList(self.l)  # 将数据设置到model
         self.listView.setModel(self.slm)  # 绑定 listView 和 model
+        self.tmp_map = None
 
     def func1(self):
         keyword = self.lineEdit.text()
@@ -829,9 +844,13 @@ class KWFListDialog(QtWidgets.QDialog, Ui_ListDialog):
 
     def item_double_clicked(self):
         idx = self.listView.currentIndex().row()  # 这个值就是所选的列表值
-        pkt = self.dpkts[self.tmp_map[idx]]
-        dialog = TextDialog(pkt.show(dump=True))
-        dialog.exec()
+        if self.tmp_map is not None:
+            pkt = self.dpkts[self.tmp_map[idx]]
+            dialog = TextDialog(pkt.show(dump=True))
+            dialog.exec()
+        else:
+            dialog = TextDialog(self.dpkts[idx].show(dump=True))
+            dialog.exec()
 
 
 class ListDialogDetail(QtWidgets.QDialog, Ui_ListDialog):
@@ -877,6 +896,7 @@ class ListDialogDetail(QtWidgets.QDialog, Ui_ListDialog):
         dialog.exec()
 
 
+# TODO
 class QMDialog(QtWidgets.QDialog, Ui_QMDialog):
     def __init__(self, l: list = None):
         super(QMDialog, self).__init__()
@@ -909,6 +929,105 @@ class QMDialog(QtWidgets.QDialog, Ui_QMDialog):
         dialog = QMDialog(l)
         result = dialog.exec()
         return dialog.modify, result == QtWidgets.QDialog.Accepted
+
+
+class Monitor(QtWidgets.QDialog, Ui_Monitor):
+    update_signal = QtCore.pyqtSignal(str)
+    max_num = 60
+    graph_signal = QtCore.pyqtSignal()
+
+    def __init__(self, string=''):
+        super(Monitor, self).__init__()
+        self.setupUi(self)
+        self.name = string
+        self.update_signal.connect(self.counter)
+        self.update_signal.connect(self.myupdate)
+        self.interval = int(time.time())
+        self.series_ = [0] * self.max_num
+        self.start = self.interval - self.max_num
+        self.graphicsView.chart().setTitle('网络流量')
+
+        self.graphicsView.setRenderHint(QPainter.Antialiasing)
+        import psutil
+        info = psutil.net_if_addrs()
+        for k, _ in info.items():
+            self.comboBox.addItem(k)
+        self.t = time.time()
+        self.thread = threading.Thread(target=self.backRun)
+        self.thread.setDaemon(True)
+        self.thread.start()
+
+    def myupdate(self):
+        if time.time() - self.t > 0.5:
+            self.graphicsView.chart().removeAllSeries()
+            self.graphicsView.chart().setTitle("网络流量速率")
+            series = QLineSeries(self.graphicsView.chart())
+            series.setName('{}'.format(self.name))
+            max = 0
+            min = 100000
+            for t_, cnt_ in zip((i for i in range(self.start, self.start + self.max_num)), self.series_):
+                if cnt_ > max:
+                    max = cnt_
+                if cnt_ < min:
+                    min = cnt_
+                series.append(t_, cnt_)
+            self.graphicsView.chart().addSeries(series)
+            self.graphicsView.chart().createDefaultAxes()
+            self.t = time.time()
+
+    def counter(self, string):
+        t = time.time()
+        if self.interval <= t < self.interval + 1:
+            self.series_[-1] += 1
+        else:
+            n = int(t - self.interval)
+            while n:
+                self.series_.pop(0)
+                self.start += 1
+                self.series_.append(0)
+                if self.interval <= t < self.interval + 1:
+                    self.series_[-1] += 1
+                n -= 1
+                self.interval += 1
+            self.interval = int(t)
+        # print(self.series_)
+
+    def backRun(self):
+        try:
+            iface = self.comboBox.currentText()
+            filter = self.lineEdit.text()
+            self.sniffer = Sniffer(iface=iface, filter=filter, prn=self.update_signal)
+            self.sniffer.run()
+        except:
+            pass
+
+    def iface_changed(self):
+        pass
+
+    def filter_changed(self):
+        pass
+
+    def start_on_clicked(self):
+        stop_thread(self.thread)
+        self.clear()
+        self.thread = threading.Thread(target=self.backRun)
+        self.thread.setDaemon(True)
+        self.thread.start()
+
+    def clear_on_clicked(self):
+        pass
+
+    def clear(self):
+        self.interval = int(time.time())
+        self.series_ = [0] * self.max_num
+        self.start = self.interval - self.max_num
+
+    def closeEvent(self, event):
+        try:
+            stop_thread(self.thread)
+        except:
+            pass
+        self.close()
 
 
 if __name__ == "__main__":

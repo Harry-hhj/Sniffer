@@ -28,7 +28,7 @@ class Ui_Analyze(object):
         self.logo.setMinimumSize(QtCore.QSize(251, 81))
         self.logo.setMaximumSize(QtCore.QSize(251, 81))
         self.logo.setText("")
-        self.logo.setPixmap(QtGui.QPixmap("static/logo_analyze.png"))
+        self.logo.setPixmap(QtGui.QPixmap(r"./static/logo_analyze.png"))
         self.logo.setScaledContents(True)
         self.logo.setAlignment(QtCore.Qt.AlignCenter)
         self.logo.setObjectName("logo")
